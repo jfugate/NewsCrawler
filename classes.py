@@ -1,8 +1,11 @@
 import urllib3, requests, json, BeautifulSoup, os
 class News_Crawler:
+	def __init__(self):
+		self.nyt_endpoint = "https://newsapi.org/v1/articles?source=" + news_source + "&apiKey=") #+ os.envrion['API_KEY']
+		self.twp_endpoint = "https://newsapi.org/v1/articles?source=" + news_source + "&apiKey=") #+ os.envrion['API_KEY']
 	def new_york_times(self):
 		news_source="the-new-york-times"
-		http_connect = requests.get("https://newsapi.org/v1/articles?source=" + news_source + "&apiKey=") #+ os.envrion['API_KEY']).read()
+		http_connect = requests.get(self.nyt_endpoint).read()
 		json_response = json.loads(http_connect.text)
 		for i in range(0, len(json_response['articles'])):
 			title = json_response['articles'][i]['title']
@@ -14,7 +17,7 @@ class News_Crawler:
 
 	def the_washington_post(self):
 		news_source="the-washington-post"
-		http_connect = requests.get("https://newsapi.org/v1/articles?source=" + news_source + "&apiKey=") #+ os.envrion['API_KEY']).read()
+		http_connect = requests.get(self.twp_endpoint).read()
 		json_response = json.loads(http_connect.text)
 		for i in range(0, len(json_response['articles'])):
 			title = json_response['articles'][i]['title']
