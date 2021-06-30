@@ -10,6 +10,7 @@ def new_york_times():
 		url = json_response['articles'][i]['url']
 		description = json_response['articles'][i]['description']
 		publish_time = json_response['articles'][i]['publishedAt']
-		print title + "\n" + author + "\n" + description + "\n" + url + "\n" + publish_time
+		yield {'title':title, 'author':author, 'description':description,'url':url, 'publish_time':publish_time}
 
-new_york_times()
+for item in new_york_times():
+	print(item)
