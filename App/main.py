@@ -4,9 +4,8 @@ import Fetchers.NewsApi as NewsApi
 from Libs.Caching import timed_lru_cache,getDiskCache
 from Libs.Config import GetConfig
 
-dc = getDiskCache()
+diskcache = getDiskCache()
 
-@dc.memoize()
 def newsapi_getTopHeadlines(config):
     return list(NewsApi.yieldTopHeadlines(config))
 
@@ -35,8 +34,8 @@ def scanList(lst):
 
 if __name__ == '__main__':
     freeze_support()
-    a = scanList(data)
-    dc['a'] = a
+    scan_data = scanList(data)
+    diskcache['scan_data'] = scan_data
     print(a)
 
 
