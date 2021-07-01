@@ -5,6 +5,29 @@ import time
 import urllib3, requests, json, os
 from bs4 import BeautifulSoup
 
+from functools import lru_cache, wraps
+from datetime import datetime, timedelta
+
+
+def timed_lru_cache(seconds: int, maxsize: int = 128):
+    def wrapper_cache(func):
+        func = lru_cache(maxsize=maxsize)(func)
+        func.lifetime = timedelta(seconds=seconds)
+        func.expiration = datetime.utcnow() + func.lifetime
+
+        @wraps(func)
+        def wrapped_func(*args, **kwargs):
+            if datetime.utcnow() >= func.expiration:
+                func.cache_clear()
+                func.expiration = datetime.utcnow() + func.lifetime
+
+            return func(*args, **kwargs)
+
+        return wrapped_func
+
+    return wrapper_cache
+
+
 def newsapi_yieldTopHeadlines():
     json_response = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=48c9ec3bce3e484fa1429e179a08c54f").json()
     for i in range(0, len(json_response['articles'])):
@@ -16,7 +39,7 @@ def newsapi_yieldTopHeadlines():
         yield {'title':title, 'author':author, 'description':description,'url':url, 'publish_time':publish_time}
         
         
-        
+@timed_lru_cache()    
 def newsapi_getTopHeadlines():
     return list(newsapi_yieldTopHeadlines())
 
